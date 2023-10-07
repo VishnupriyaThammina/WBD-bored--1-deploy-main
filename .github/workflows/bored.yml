@@ -1,0 +1,34 @@
+name: node integration and unit tests
+
+on:
+  push:
+    branches: main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+        with:
+          node-version: 12
+      - name: backend dependencies
+        run: |
+          npm ci
+
+      - name: Unit tests
+        run: |
+          npm test
+          
+  deploy:
+    name: Deploy
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: _g-usDTpV2c # Can be found as part of the Deploy Hook
+          api-key: rnd_ChANO0Hf9YEymB6Z75atRSsR30Bs # Create your API key in Render Dashboard > Account Settings
